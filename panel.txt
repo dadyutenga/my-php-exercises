@@ -1,0 +1,51 @@
+<?php
+// Start the session
+session_start();
+
+// Check if the admin is logged in
+if (!isset($_SESSION['admin_id'])) {
+    // Redirect to the admin login page if not logged in
+    header("Location: admin.php");
+    exit();
+}
+
+// Include database connection
+require 'db.php';
+
+// Retrieve admin information from the database (optional)
+$adminId = $_SESSION['admin_id'];
+$sqlAdminInfo = "SELECT * FROM admin WHERE admin_id='$adminId'";
+$resultAdminInfo = $conn->query($sqlAdminInfo);
+$adminInfo = ($resultAdminInfo->num_rows > 0) ? $resultAdminInfo->fetch_assoc() : null;
+
+// ... perform admin-specific tasks or display information ...
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="css/style.css"> <!-- Include your stylesheet -->
+</head>
+<body>
+
+    <h2>Welcome to the Admin Panel, <?php echo $_SESSION['admin_username']; ?>!</h2>
+
+    <!-- Display admin information if retrieved from the database (optional) -->
+    <?php if ($adminInfo): ?>
+        <p>Admin ID: <?php echo $adminInfo['admin_id']; ?></p>
+        <p>Admin Username: <?php echo $adminInfo['username']; ?></p>
+        <!-- Add more admin information as needed -->
+    <?php endif; ?>
+
+    <!-- Add admin-specific tasks or content here -->
+
+    <form action="logout.php" method="post">
+        <button type="submit">Logout</button>
+    </form>
+
+</body>
+</html>
